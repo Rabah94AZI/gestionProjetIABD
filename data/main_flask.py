@@ -14,37 +14,40 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # S'assurer que le dossier d'upload existe
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Charger le modèle
-model = tf.keras.models.load_model('data/modele_couverture_livre.h5')
+# Charger le modèle TFLite
+interpreter = tf.lite.Interpreter(model_path='data/modele_couverture_livre.tflite')
+interpreter.allocate_tensors()
+
+# Obtenir les index des tenseurs d'entrée et de sortie
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # Récupérer l'image du formulaire
         file = request.files['file']
         if file:
-            # Sécuriser le nom du fichier et le sauvegarder temporairement
             filename = secure_filename(file.filename)
-            
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
 
-            # Charger l'image depuis le fichier temporaire
-            img = image.load_img(filepath, target_size=(64, 64))
+            # Charger l'image et préparer les données d'entrée
+            img = image.load_img(filepath, target_size=(128, 128))
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
+            img_array = img_array.astype('float32')
             img_array /= 255.0  # Normaliser
 
-            # laprédiction
-            prediction = model.predict(img_array)
+            # Utiliser l'interpréteur TFLite pour faire la prédiction
+            interpreter.set_tensor(input_details[0]['index'], img_array)
+            interpreter.invoke()
+            prediction = interpreter.get_tensor(output_details[0]['index'])
 
             # Supprimer le fichier temporaire
             os.remove(filepath)
 
-            #affichage
+            # Affichage du résultat
             result = "Ce livre est prédit comme un bon livre." if prediction[0][0] > 0.5 else "Ce livre est prédit comme un mauvais livre."
-
-            # Renvoyer la page result
             return render_template('result.html', result=result)
 
     return render_template('index.html')
