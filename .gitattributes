@@ -1,0 +1,1 @@
+data/modele_couverture_livre.h5 filter=lfs diff=lfs merge=lfs -text
