@@ -1,0 +1,18 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Résultat de la Prédiction</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='result_styles.css') }}">
+</head>
+<body>
+
+<a href="/" class="home-link">Retourner à l'accueil</a>
+
+<div class="content">
+    <h1>Résultat de la Prédiction</h1>
+    <p class="prediction-result">{{ result }}</p>
+</div>
+
+</body>
+</html>

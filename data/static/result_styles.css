@@ -1,0 +1,37 @@
+/* static/result_styles.css */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('../static/robot.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+.prediction-result {
+    font-size: 24px;
+    color: #333; /* Ou toute autre couleur souhaitée */
+}
+
+
+
+.home-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    color: #007bff; /* Ou toute autre couleur souhaitée */
+    font-size: 16px;
+}
+
+
+.content {
+    margin-top: 50px; 
+    text-align: center;
+    
+}
